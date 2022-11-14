@@ -1,0 +1,23 @@
+.title {
+  display: inline-block;
+  font-size: 38px;
+  font-weight: 700;
+  &__wrapper {
+
+    @media (max-width: 1199px) {
+      height: calc(100vh - 119px);
+    }
+
+    @media (max-width: 899px) {
+      height: calc(100vh - 111px);
+    }
+
+    @media (max-width: 599px) {
+      height: calc(100vh - 79px);
+    }
+
+    padding-top: 80px;
+    display: flex;
+    justify-content: center;
+  }
+}

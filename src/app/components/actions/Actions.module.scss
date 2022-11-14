@@ -1,0 +1,43 @@
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.action {
+  width: 53px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #EEF3FD;
+  border-radius: 3px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  color: #5382E7;
+  transition: transform .5s,  background-color 0.4s ease-in;
+
+  &:hover {
+    background-color: transparent;
+    transform: scale(1.2);
+  }
+
+}
+.delete {
+  width: 30px;
+  height: 30px;
+  transition: transform .5s;
+
+  & * {
+    transition: stroke 0.2s ease-in, opacity 0.2s ease-in;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+    & * {
+      stroke: #5382E7;
+      opacity: 1
+    }
+  }
+}
