@@ -15,5 +15,5 @@ export interface IModal {
     children: React.ReactNode;
     visible: boolean | undefined;
     handleVisible: () => void;
-    sell?: boolean | undefined;
+    sell?: boolean;
 }

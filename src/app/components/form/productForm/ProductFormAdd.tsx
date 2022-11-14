@@ -146,6 +146,7 @@ const ProductFormAdd = ({handleVisible}: IProductAddProp) => {
                             errors={errors.category}
                         />
                         <InputForm
+                            type='number'
                             label='Quantity of goods'
                             name='remains'
                             value={values.remains}

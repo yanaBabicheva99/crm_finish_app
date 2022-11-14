@@ -16,10 +16,3 @@ export interface IReset {
     resetForm: () => void
 }
 
-//(event: React.TouchEvent<HTMLInputElement>) => void
-//  touched: FormikTouched<{
-//         [field: string]: any
-//     }>,
-//     errors: FormikErrors<{
-//         [field: string]: any
-//     }>

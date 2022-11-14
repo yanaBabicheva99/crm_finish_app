@@ -20,11 +20,7 @@ export interface IProduct {
 export interface IProductInitialAdd extends Omit<IProduct, 'remains'>{
     remains: string;
 }
-export interface IProductInitialEdit extends Omit<IProductInitialAdd, 'quantity' | 'revenue' | '_id' | 'creationData' | 'remains'> {
-    remains: string | number;
-    quantity: string | number;
-    revenue: string | number;
-}
+
 export interface IProductAddProp {
     handleVisible: () => void
 }

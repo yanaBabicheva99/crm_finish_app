@@ -7,7 +7,7 @@ import { useChangeProductMutation, useGetAllProductsQuery } from '../../../servi
 
 import style from '../../modal/Modal.module.scss';
 import styleForm from '../form.module.scss';
-import {IProductEditProp, IProductInitialEdit} from "../../../types/Product";
+import {IProduct, IProductEditProp} from "../../../types/Product";
 
 const AddProductSchema = Yup.object().shape({
     store: Yup
@@ -61,7 +61,18 @@ const AddProductSchema = Yup.object().shape({
         )
 });
 const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
-    const {_id, creationData, ...dataProduct} = data;
+    const {
+        _id,
+        creationData,
+        quantity,
+        __v,
+        user,
+        lastSalePrice,
+        day,
+        lastSale,
+        revenue,
+        delete: deleteProduct,
+        ...dataProduct} = data;
 
     const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
         selectFromResult: ({ data, error, isLoading }) => ({
@@ -76,16 +87,15 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
     const initialValues = dataProduct;
 
 
-    const Edit = async (data: IProductInitialEdit) => {
-        const updateData = {...data, remains: Number(data.remains)};
-        const content = {_id, ...updateData};
+    const Edit = async (data: Pick<IProduct, 'store' | 'productName' | 'category' | 'price' | 'weight' | 'remains'>) => {
+        const content = {_id, ...data};
 
         if (oldProduct) {
             const {_id:productId, __v, ...product } = oldProduct;
 
             const changedProduct = {
                 ...product,
-                ...updateData
+                ...data
             };
 
             await changeProduct({id: content._id, content: changedProduct});
@@ -153,6 +163,7 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
                             errors={errors.category}
                         />
                         <InputForm
+                            type='number'
                             label='Quantity of goods'
                             name='remains'
                             value={values.remains}

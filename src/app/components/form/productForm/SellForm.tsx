@@ -57,17 +57,6 @@ const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
     ];
 
     const day = new Date().getDay();
-
-    // const days = {
-    //     1: 'Mon',
-    //     2: 'Tue',
-    //     3: 'Wed',
-    //     4: 'Thu',
-    //     5: 'Fri',
-    //     6: 'Sat',
-    //     0: 'Sun'
-    // };
-
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const initialValues = {
@@ -76,18 +65,17 @@ const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
     };
 
     const sell = async ({quantity, day}: IProductInitialSell) => {
-        const updateQuantity = Number(quantity);
         if (oldProduct) {
             const product = oldProduct;
             const updatePrice = Number(product.price);
 
             const updatedProduct = {
-                remains: product.remains - updateQuantity || 0,
-                quantity: product.quantity + updateQuantity,
+                remains: product.remains - quantity || 0,
+                quantity: product.quantity + quantity,
                 day,
                 lastSale: getData(),
                 lastSalePrice: product.price,
-                revenue: product.revenue + updatePrice * updateQuantity
+                revenue: product.revenue + updatePrice * quantity
             };
             await updateProduct({id, content: updatedProduct})
             handleVisible();
@@ -118,6 +106,7 @@ const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
                   }) => (
                     <form className={styleForm.form} onSubmit={handleSubmit}>
                         <InputForm
+                            type='number'
                             label='Number of products'
                             name='quantity'
                             value={values.quantity}
