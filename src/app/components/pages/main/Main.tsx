@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useRef} from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { useGetAllProductsQuery } from '../../../service/ProductServices';
@@ -14,6 +14,9 @@ import { Drawer, useMediaQuery } from '@mui/material';
 import styleTitle from '../../../style/title/Title.module.scss';
 
 const Main = () => {
+
+  type ModalRef = React.ElementRef<typeof Modal>;
+  const modalRef = useRef<ModalRef>(null);
 
   const lacationState = useLocation();
   const { visible, handleOpen: handleOpenModal, handleClose } = useModal()!;
@@ -33,13 +36,9 @@ const Main = () => {
   const { id, remains } = lacationState.state || { id: null, remains: null };
   const isMobile = useMediaQuery('(max-width:599px)');
 
-  const handleOpen = () => {
-    handleOpenModal('sell');
-  };
-
   useEffect(() => {
     if (id !== null) {
-      handleOpen();
+      modalRef.current?.open()
     }
   }, []);
 
@@ -79,8 +78,7 @@ const Main = () => {
           : id !== null && (
           <Modal
             sell={true}
-            visible={visible.sell}
-            handleVisible={() => handleClose('sell')}
+            ref={modalRef}
           >
             <SellForm
               id={id}

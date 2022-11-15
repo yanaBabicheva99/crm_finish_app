@@ -1,17 +1,38 @@
-import React from 'react';
+import React, {useState, useImperativeHandle} from 'react';
+
 
 import {ReactComponent as IconClose} from '../../assets/img/action/delete.svg';
 
 import style from './Modal.module.scss';
-import {IModal} from "../../types/Layout";
+import styleForm from "../form/form.module.scss";
 
-const Modal = ({children, visible, handleVisible, sell = false}: IModal) => {
+interface ModalProps {
+    children: React.ReactNode;
+    sell?: boolean;
+}
+
+interface ModalRef {
+    open: () => void,
+    close: () => void
+}
+
+const Modal: React.ForwardRefRenderFunction< ModalRef, ModalProps> = ((
+    {children, sell = false}, ref) => {
+    const [visible, setVisible] = useState(false);
+
+    const handleClose = () => setVisible(false);
+
+    useImperativeHandle(ref, () => ({
+        open: () => setVisible(true),
+        close: handleClose
+    }))
+
     const rootClasses = () => {
         return visible ? [style.modal, style.active].join(' ') : style.modal;
     };
 
     return (
-            <div className={rootClasses()} onClick={handleVisible}>
+            <div className={rootClasses()} onClick={handleClose}>
                 <div className={!sell ? style.modal__content_wrapper : ''}>
                 <div className={!sell ? style.modal__content: style.modal__content_sell}
                      onClick={(e) => e.stopPropagation()}
@@ -19,7 +40,7 @@ const Modal = ({children, visible, handleVisible, sell = false}: IModal) => {
                     {children}
                     <button
                         className={!sell ? style.modal__btn : [style.modal__btn, style.sell].join(' ')}
-                        onClick={handleVisible}
+                        onClick={handleClose}
                     >
                         <IconClose className={style.modal__btn_close}/>
                     </button>
@@ -27,5 +48,6 @@ const Modal = ({children, visible, handleVisible, sell = false}: IModal) => {
                 </div>
             </div>
     );
-};
-export default Modal;
+});
+
+export default React.forwardRef(Modal);

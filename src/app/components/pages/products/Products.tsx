@@ -18,6 +18,10 @@ const Products = () => {
      console.log('RENDER')
   });
 
+  type ModalRef = React.ElementRef<typeof Modal>;
+  const modalRef = useRef<ModalRef>(null);
+
+
   const [currentPage, setCurrentPage] = useState(1);
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
 
@@ -67,6 +71,16 @@ const Products = () => {
 
   useEffect(() => console.log('RR'), [productsCrop])
 
+  useEffect(() => {
+    if (currentProduct) {
+      modalRef.current?.open()
+    }
+  }, [currentProduct])
+
+  const handleCloseModal = () => {
+    modalRef.current?.close()
+  }
+
   if (loading) {
     return <h2>Loading...</h2>
   } else {
@@ -96,14 +110,11 @@ const Products = () => {
                         />)
                     }
                 </Drawer>
-                : <Modal
-                  visible={visible.edit}
-                  handleVisible={() => handleClose('edit')}
-                >
+                : <Modal ref={modalRef}>
                   {currentProduct && (
                     <ProductFormEdit
                       data={currentProduct}
-                      handleVisible={() => handleClose('edit')}
+                      handleVisible={handleCloseModal}
                     />)
                   }
                 </Modal>

@@ -13,13 +13,21 @@ import style from './Layout.module.scss';
 import { useMediaQuery, Drawer } from '@mui/material';
 
 const Layout = ({children, title, subtitle}: ILayoutProp) => {
+
+    type ModalRef = React.ElementRef<typeof Modal>;
+    const modalRef = useRef<ModalRef>(null);
+
    const isMobile = useMediaQuery('(max-width:599px)');
 
-   const {visible, handleOpen, handleClose} = useModal()!;
+   const {visible,  handleClose} = useModal()!;
 
    const [openBurger, setOpenBurger] = useState<boolean>(false);
     const handleOpenBurger = () => {
         setOpenBurger(!openBurger);
+    }
+
+    const handleOpen = () => {
+        modalRef.current?.open()
     }
 
     return (
@@ -37,7 +45,7 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                     </div>
                     <button
                         className={style.layout__btn}
-                        onClick={() => handleOpen('create')}
+                        onClick={handleOpen}
                     >
                         <IconBtn className={style.layout__btn_add}/>
                         <span>Create a product</span>
@@ -59,10 +67,7 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                             />
                         </Drawer>
 
-                    :      <Modal
-                            visible={visible.create}
-                            handleVisible={() => handleClose('create')}
-                        >
+                    :      <Modal ref={modalRef}>
                             <ProductFormAdd
                                 handleVisible={() => handleClose('create')}
                             />
