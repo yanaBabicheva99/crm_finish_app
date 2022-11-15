@@ -1,71 +1,23 @@
 import React from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 
 import InputForm from '../inputForm/InputForm';
 import { getData } from '../../../utils/Products';
 import { useAddProductMutation } from '../../../service/ProductServices';
 import {IProductAddProp, IProductInitialAdd} from '../../../types/Product';
+import {IReset} from "../../../types/Form";
+import {schemaProduct} from '../../../validation/ValidationSchema'
 
 import style from '../../modal/Modal.module.scss';
 import styleForm from '../form.module.scss';
-import {IReset} from "../../../types/Form";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 
-const AddProductSchema = Yup.object().shape({
-    store: Yup
-        .string()
-        .required('Store is required')
-        .min(2, 'Store is too short!')
-        .max(25, 'Store is too long!'),
-    price: Yup
-        .string()
-        .required('Price is required')
-        .matches(
-            /^(0|[1-9]\d*)$/,
-            'Price is incorrect'
-        )
-        .matches(
-            /^[1-9]{1}[0-9]*$/,
-            'Price is incorrect'
-        ),
-    productName: Yup
-        .string()
-        .required('Product Name is required')
-        .min(2, 'Product Name is too short!')
-        .max(25, 'Product Name is too long!'),
-    category: Yup
-        .string()
-        .required('Product Category is required')
-        .min(2, 'Product Category is too short!')
-        .max(25, 'Product Category is too long!'),
-
-    remains: Yup
-        .string()
-        .required('Quantity of goods is required')
-        .matches(
-            /^(0|[1-9]\d*)$/,
-            'Quantity of goods is incorrect'
-        )
-        .matches(
-            /^[1-9]{1}[0-9]*$/,
-            'Quantity of goods is incorrect'
-        ),
-    weight: Yup
-        .string()
-        .required('Weight is required')
-        .matches(
-            /^(0|[1-9]\d*)$/,
-            'Weight is incorrect'
-        )
-        .matches(
-            /^[1-9]{1}[0-9]*$/,
-            'Weight is incorrect'
-        )
-});
-
+const AddProductSchema = schemaProduct;
 
 const ProductFormAdd = ({handleVisible}: IProductAddProp) => {
     const [addProduct, {}] = useAddProductMutation();
+    const navigate = useNavigate();
 
     const initialValues = {
         store: '',
@@ -82,7 +34,11 @@ const ProductFormAdd = ({handleVisible}: IProductAddProp) => {
             ...updateData,
             creationData: getData(),
         }
-        await addProduct(product);
+        addProduct(product)
+           .unwrap()
+           .then(data => navigate('/products'))
+           .catch((err) => toast.error('Something went wrong, try again later'))
+
         handleVisible();
         resetForm();
     };

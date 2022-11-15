@@ -6,6 +6,7 @@ const router = express.Router();
 
 
 router.get('/', passport.authenticate('jwt', {session: false}), controller.getUserProducts);
+router.get('/get/:id', passport.authenticate('jwt', {session: false}), controller.getUserProduct);
 router.patch('/remove/:id', passport.authenticate('jwt', {session: false}), controller.removeUserProducts);
 
 router.post('/', passport.authenticate('jwt', {session: false}), controller.createUserProducts);

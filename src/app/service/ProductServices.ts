@@ -9,6 +9,16 @@ export const productsAPI = createApi({
   }),
   tagTypes: ['Product'],
   endpoints: (build) => ({
+    getProduct: build.query<IProduct, string>({
+      query: (id: string) => ({
+        url: `products/get/${id}`,
+        headers: {
+          'authorization': JSON.parse(localStorage.getItem('userData') || '').token,
+          'content-type': 'text/plain',
+        }
+      }),
+      providesTags: (result) => ['Product'],
+    }),
     getAllProducts: build.query<IProduct[], void>({
       query: () => ({
         url: 'products',
@@ -75,4 +85,5 @@ export const {
   useAddProductMutation,
   useChangeProductMutation,
   useUpdateProductMutation,
+  useGetProductQuery
 } = productsAPI;

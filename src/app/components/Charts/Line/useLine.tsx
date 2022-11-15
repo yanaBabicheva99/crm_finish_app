@@ -1,23 +1,20 @@
 import { useEffect, useState } from 'react';
 
-import { getData } from '../../../utils/Products';
 import {IProduct} from "../../../types/Product";
 
 export const useLine = (arrOptions: IProduct[]) => {
 
-    const dayNow = getData();
-
     const [amountSoldProducts, setAmountSoldProducts] = useState<number[]>([]);
 
     useEffect(() => {
-        const soldProductsToday = arrOptions.filter(product => product.lastSale === dayNow);
+        const soldProducts = arrOptions.filter(product => product.revenue);
 
-        if (soldProductsToday.length === 0) {
+        if (soldProducts.length === 0) {
             return;
         }
 
-        const data = soldProductsToday.map((product) => product.quantity * Number(product.price));
-        const totalAmount = data.reduce((total, item) => total + item, 0);
+        const data = soldProducts.map((product) => product.revenue);
+
         setAmountSoldProducts([0, ...data]);
     }, [arrOptions]);
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 
@@ -12,7 +12,6 @@ import './style/index.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
 const store = createStore();
-
 function App() {
     const {token, login, logout, userId} = useAuth();
     const isAuthenticated = !!token;

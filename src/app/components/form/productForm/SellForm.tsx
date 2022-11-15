@@ -1,10 +1,12 @@
 import React from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
+import {toast} from "react-toastify";
 
 import InputForm from '../inputForm/InputForm';
 import { getData } from '../../../utils/Products';
-import { useGetAllProductsQuery, useUpdateProductMutation } from '../../../service/ProductServices';
+import { useGetProductQuery, useUpdateProductMutation} from '../../../service/ProductServices';
+import {schemaSellProduct} from '../../../validation/ValidationSchema';
+import {IProductInitialSell, IProductSellProp} from "../../../types/Product";
 
 import style from '../../modal/Modal.module.scss';
 import styleForm from '../form.module.scss';
@@ -12,39 +14,13 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import {IProductInitialSell, IProductSellProp} from "../../../types/Product";
 
 const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
 
-    const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
-        selectFromResult: ({ data, error, isLoading }) => ({
-            data: data?.find((item) =>  item._id === id),
-            error,
-            isLoading
-        }),
-    });
+    const { data: oldProduct, error, isLoading } = useGetProductQuery(id);
     const [updateProduct, {}] = useUpdateProductMutation();
 
-    const AddProductSchema = Yup.object().shape({
-        quantity: Yup
-            .string()
-            .test('Number of products is incorrect', 'Number of products is incorrect',
-                (val) => Number(val) <= Number(quantity),
-            )
-            .required('Number of products is required')
-            .matches(
-                /^(0|[1-9]\d*)$/,
-                'Number of products is incorrect'
-            )
-            .matches(
-                /^[1-9]{1}[0-9]*$/,
-                'Number of products is incorrect'
-            ),
-
-
-    });
-
-
+    const SellProductSchema = schemaSellProduct(quantity)
 
     const options = [
         {value: 'Mon', label: 'Monday'},
@@ -77,7 +53,11 @@ const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
                 lastSalePrice: product.price,
                 revenue: product.revenue + updatePrice * quantity
             };
-            await updateProduct({id, content: updatedProduct})
+
+             updateProduct({id, content: updatedProduct})
+                 .unwrap()
+                 .catch(err => toast.error('Something went wrong, try again later'))
+
             handleVisible();
         }
     };
@@ -91,7 +71,7 @@ const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
             </header>
             <Formik
                 initialValues={initialValues}
-                validationSchema={AddProductSchema}
+                validationSchema={SellProductSchema}
                 enableReinitialize={true}
                 onSubmit={sell}
             >

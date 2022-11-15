@@ -12,7 +12,14 @@ module.exports.getUserProducts = async function(req, res) {
   }
 
 }
-
+module.exports.getUserProduct = async function(req, res) {
+    try {
+        const product = await Products.findOne({ _id:req.params.id })
+        res.status(200).json(product);
+    } catch(err) {
+        errorHandler(res, err);
+    }
+}
 module.exports.removeUserProducts = async function(req, res) {
     try {
         const product = await Products.findOneAndUpdate(

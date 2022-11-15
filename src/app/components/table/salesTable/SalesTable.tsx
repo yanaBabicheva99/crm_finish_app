@@ -5,10 +5,10 @@ import TableHeader from '../tableHeader/TableHeader';
 import TableBody from '../tableBody/TableBody';
 import { getPrice, getWeight } from '../../../utils/Products';
 import { useGetUserQuery } from '../../../service/UserServices';
-
-import styleBox from '../Table.module.scss';
 import {AuthContext} from "../../../context/AuthContext";
 import {IProduct} from "../../../types/Product";
+
+import styleBox from '../Table.module.scss';
 
 const SalesTable = ({sellProducts}: {sellProducts: IProduct[]}) => {
 
@@ -31,12 +31,7 @@ const SalesTable = ({sellProducts}: {sellProducts: IProduct[]}) => {
         address: {
             path: 'address',
             name: 'Address',
-            component: () => {
-                if (user) {
-                    return  user.address.trim()
-                }
-                return <Link to='/personal'>address</Link>
-            }
+            component: () => user?.address || <Link to='/personal'>address</Link>
         },
         category: {
             path: 'category',

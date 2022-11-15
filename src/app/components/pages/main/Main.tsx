@@ -22,6 +22,14 @@ const Main = () => {
 
   const soldProducts = products?.length ? products.filter(product => product.quantity) : [];
 
+  // const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
+  //   selectFromResult: ({ data, error, isLoading }) => ({
+  //     data: data?.find((item) =>  item._id === _id),
+  //     error,
+  //     isLoading
+  //   }),
+  // });
+
   const { id, remains } = lacationState.state || { id: null, remains: null };
   const isMobile = useMediaQuery('(max-width:599px)');
 

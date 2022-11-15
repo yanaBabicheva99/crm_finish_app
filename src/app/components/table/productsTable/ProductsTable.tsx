@@ -17,6 +17,8 @@ const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}
     const {userId} = useContext(AuthContext)!;
     const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
 
+    console.log(user);
+
     if (loading) {
         return <h2>Loading...</h2>
     }
@@ -33,12 +35,7 @@ const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}
         address: {
             path: 'address',
             name: 'Address',
-            component: () => {
-                if (user) {
-                    return  user.address.trim()
-                }
-                return <Link to='/personal'>address</Link>
-            }
+            component: () => user?.address || <Link to='/personal'>address</Link>
         },
         category: {
             path: 'category',

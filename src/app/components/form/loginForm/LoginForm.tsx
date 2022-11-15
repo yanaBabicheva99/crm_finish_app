@@ -11,32 +11,13 @@ import {IUser} from "../../../types/User";
 
 import style from '../../pages/login/Login.module.scss';
 import styleForm from '../form.module.scss';
-
-
-
-
+import {Validation} from "../../../constants/validationConstants";
 
 const SignupSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Email is required'),
+    email: Yup.string().email(Validation.isInvalid).required(Validation.isRequired),
     password: Yup
         .string()
-        .required('Password is required')
-        .matches(
-            /(?=.*[A-Z])/,
-            'The password must have at least one capital letter'
-        )
-        .matches(
-            /(?=.*[0-9])/,
-            'The password must have at least one figure'
-        )
-        .matches(
-            /(?=.*[!@#$%^&*])/,
-            'The password must have at least one special symbol !@#$%^&*'
-        )
-        .matches(
-            /(?=.{8,})/,
-            'The password must consist of at least 8 symbols'
-        ),
+        .required(Validation.isRequired)
 });
 
 const RegisterForm = () => {
@@ -49,7 +30,6 @@ const RegisterForm = () => {
     };
 
     const handleSubmit = async (content: Pick<IUser, 'email' | 'password'>) => {
-        console.log('+')
         if (authContext) {
             const {login} = authContext;
             signIn(content)

@@ -1,65 +1,16 @@
 import React from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 
 import InputForm from '../inputForm/InputForm';
-import { useChangeProductMutation, useGetAllProductsQuery } from '../../../service/ProductServices';
+import {useChangeProductMutation, useGetProductQuery} from '../../../service/ProductServices';
+import {schemaProduct} from '../../../validation/ValidationSchema';
 
 import style from '../../modal/Modal.module.scss';
 import styleForm from '../form.module.scss';
 import {IProduct, IProductEditProp} from "../../../types/Product";
+import {toast} from "react-toastify";
 
-const AddProductSchema = Yup.object().shape({
-    store: Yup
-        .string()
-        .required('Store is required')
-        .min(2, 'Store is too short!')
-        .max(25, 'Store is too long!'),
-    price: Yup
-        .string()
-        .required('Price is required')
-        .matches(
-            /^(0|[1-9]\d*)$/,
-            'Price is incorrect'
-        )
-        .matches(
-            /^[1-9]{1}[0-9]*$/,
-            'Price is incorrect'
-        ),
-    productName: Yup
-        .string()
-        .required('Product Name is required')
-        .min(2, 'Product Name is too short!')
-        .max(25, 'Product Name is too long!'),
-    category: Yup
-        .string()
-        .required('Product Category is required')
-        .min(2, 'Product Category is too short!')
-        .max(25, 'Product Category is too long!'),
-
-    remains: Yup
-        .string()
-        .required('Quantity of goods is required')
-        .matches(
-            /^(0|[1-9]\d*)$/,
-            'Quantity of goods is incorrect'
-        )
-        .matches(
-            /^[1-9]{1}[0-9]*$/,
-            'Quantity of goods is incorrect'
-        ),
-    weight: Yup
-        .string()
-        .required('Weight is required')
-        .matches(
-            /^(0|[1-9]\d*)$/,
-            'Weight is incorrect'
-        )
-        .matches(
-            /^[1-9]{1}[0-9]*$/,
-            'Weight is incorrect'
-        )
-});
+const EditProductSchema = schemaProduct;
 const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
     const {
         _id,
@@ -74,13 +25,7 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
         delete: deleteProduct,
         ...dataProduct} = data;
 
-    const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
-        selectFromResult: ({ data, error, isLoading }) => ({
-            data: data?.find((item) =>  item._id === _id),
-            error,
-            isLoading
-        }),
-    });
+    const { data: oldProduct, error, isLoading } = useGetProductQuery(_id);
 
     const [changeProduct, {}] = useChangeProductMutation();
 
@@ -91,14 +36,17 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
         const content = {_id, ...data};
 
         if (oldProduct) {
-            const {_id:productId, __v, ...product } = oldProduct;
+            const {_id: productId, __v, ...product } = oldProduct;
 
             const changedProduct = {
                 ...product,
                 ...data
             };
 
-            await changeProduct({id: content._id, content: changedProduct});
+            changeProduct({id: content._id, content: changedProduct})
+                .unwrap()
+                .catch(err => toast.error('Something went wrong, try again later'))
+
             handleVisible();
         }
     };
@@ -113,7 +61,7 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
             <Formik
                 initialValues={initialValues}
                 enableReinitialize={true}
-                validationSchema={AddProductSchema}
+                validationSchema={EditProductSchema}
                 onSubmit={Edit}
             >
                 {({

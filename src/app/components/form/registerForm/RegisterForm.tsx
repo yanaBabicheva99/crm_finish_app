@@ -1,56 +1,17 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 
 import InputForm from '../inputForm/InputForm';
 import { useSignUpMutation } from '../../../service/UserServices';
+import {schemaUser} from '../../../validation/ValidationSchema';
 
 import style from '../../pages/login/Login.module.scss';
 import styleForm from '../form.module.scss';
 import {IUser} from "../../../types/User";
 
-
-const SignupSchema = Yup.object().shape({
-    name: Yup.string()
-        .min(2, 'Name is too short!')
-        .max(10, 'Name is too long!')
-        .required('Name is required'),
-    lastName: Yup.string()
-        .min(2, 'Last name is too short!')
-        .max(10, 'Last name is too long!')
-        .required('Last name is required'),
-    companyName: Yup.string()
-        .min(2, 'Company name is too short!')
-        .max(10, 'Company name is too long!')
-        .required('Company name is required'),
-
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup
-        .string()
-        .required('Password is required')
-        .matches(
-            /(?=.*[A-Z])/,
-            'The password must have at least one capital letter'
-        )
-        .matches(
-            /(?=.*[0-9])/,
-            'The password must have at least one figure'
-        )
-        .matches(
-            /(?=.*[!@#$%^&*])/,
-            'The password must have at least one special symbol !@#$%^&*'
-        )
-        .matches(
-            /(?=.{8,})/,
-            'The password must consist of at least 8 symbols'
-        ),
-    repeatPassword: Yup.string()
-        .required('Repeat password is required')
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
-});
-
+const SignupSchema = schemaUser;
 
 const RegisterForm = () => {
     const [signUp] = useSignUpMutation();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Menu from '../menu/Menu';
 import Modal from '../modal/Modal';
@@ -16,19 +16,13 @@ import { useMediaQuery, Drawer } from '@mui/material';
 const Layout = ({children, title, subtitle}: ILayoutProp) => {
    const isMobile = useMediaQuery('(max-width:599px)');
 
-   const {visible, setVisible} = useModal()!;
+   const {visible} = useModal()!;
+
    const [openBurger, setOpenBurger] = useState<boolean>(false);
+    const handleOpenBurger = () => {
+        setOpenBurger(!openBurger);
+    }
 
-
-   const handleOpen = () => {
-      setVisible({create: true})
-   };
-   const handleClose = () => {
-       setVisible({create: false});
-   }
-   const handleOpenBurger = () => {
-       setOpenBurger(!openBurger);
-   }
     return (
         <div className={style.layout__wrapper}>
             <Menu open={openBurger}/>

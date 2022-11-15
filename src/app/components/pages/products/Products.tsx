@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import ProductsTable from '../../table/productsTable/ProductsTable';
 import Modal from '../../modal/Modal';
@@ -17,9 +17,23 @@ const Products = () => {
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
 
   const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
+  console.log(products)
+
+
+  // const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
+  //   selectFromResult: ({ data, error, isLoading }) => ({
+  //     data: data?.find((item) =>  item._id === _id),
+  //     error,
+  //     isLoading
+  //   }),
+  // });
 
   const [deleteProduct, {}] = useDeleteProductMutation();
 
+
+  useEffect(() => {
+    console.log('render');
+  }, [])
 
   const allProducts = products?.length ? products.filter(product => product.remains !== 0 && !product.delete) : [];
   const count = allProducts.length;
