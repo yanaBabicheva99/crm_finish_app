@@ -12,11 +12,10 @@ import {ILayoutProp} from "../../types/Layout";
 import style from './Layout.module.scss';
 import { useMediaQuery, Drawer } from '@mui/material';
 
-
 const Layout = ({children, title, subtitle}: ILayoutProp) => {
    const isMobile = useMediaQuery('(max-width:599px)');
 
-   const {visible} = useModal()!;
+   const {visible, handleOpen, handleClose} = useModal()!;
 
    const [openBurger, setOpenBurger] = useState<boolean>(false);
     const handleOpenBurger = () => {
@@ -38,7 +37,7 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                     </div>
                     <button
                         className={style.layout__btn}
-                        onClick={handleOpen}
+                        onClick={() => handleOpen('create')}
                     >
                         <IconBtn className={style.layout__btn_add}/>
                         <span>Create a product</span>
@@ -53,19 +52,19 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                     isMobile
                     ?  <Drawer
                             open={visible.create}
-                            onClose={handleClose}
+                            onClose={() => handleClose('create')}
                         >
                             <ProductFormAdd
-                                handleVisible={handleClose}
+                                handleVisible={() => handleClose('create')}
                             />
                         </Drawer>
 
                     :      <Modal
                             visible={visible.create}
-                            handleVisible={handleClose}
+                            handleVisible={() => handleClose('create')}
                         >
                             <ProductFormAdd
-                                handleVisible={handleClose}
+                                handleVisible={() => handleClose('create')}
                             />
                         </Modal>
                 }

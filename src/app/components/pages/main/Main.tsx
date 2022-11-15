@@ -16,7 +16,7 @@ import styleTitle from '../../../style/title/Title.module.scss';
 const Main = () => {
 
   const lacationState = useLocation();
-  const { visible, setVisible } = useModal()!;
+  const { visible, handleOpen: handleOpenModal, handleClose } = useModal()!;
 
   const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
 
@@ -34,10 +34,7 @@ const Main = () => {
   const isMobile = useMediaQuery('(max-width:599px)');
 
   const handleOpen = () => {
-    setVisible({ sell: true });
-  };
-  const handleClose = () => {
-    setVisible({ sell: false });
+    handleOpenModal('sell');
   };
 
   useEffect(() => {
@@ -70,12 +67,12 @@ const Main = () => {
           ? <Drawer
             anchor="bottom"
             open={visible.sell}
-            onClose={handleClose}
+            onClose={() => handleClose('sell')}
           >
             <SellForm
               id={id}
               quantity={remains}
-              handleVisible={handleClose}
+              handleVisible={() => handleClose('sell')}
             />
           </Drawer>
 
@@ -83,12 +80,12 @@ const Main = () => {
           <Modal
             sell={true}
             visible={visible.sell}
-            handleVisible={handleClose}
+            handleVisible={() => handleClose('sell')}
           >
             <SellForm
               id={id}
               quantity={remains}
-              handleVisible={handleClose}
+              handleVisible={() => handleClose('sell')}
             />
           </Modal>)
       }

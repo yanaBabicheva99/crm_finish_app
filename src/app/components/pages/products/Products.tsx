@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import ProductsTable from '../../table/productsTable/ProductsTable';
 import Modal from '../../modal/Modal';
@@ -13,16 +13,19 @@ import style from '../../../style/title/Title.module.scss';
 import {IProduct} from "../../../types/Product";
 
 const Products = () => {
+
+  useEffect(() => {
+     console.log('RENDER')
+  });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
 
   const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
-  console.log(products)
 
-
-  // const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
+  // const { data: products, error, isLoading: loading } = useGetAllProductsQuery(undefined, {
   //   selectFromResult: ({ data, error, isLoading }) => ({
-  //     data: data?.find((item) =>  item._id === _id),
+  //     data: data?.filter((product: IProduct) => product.remains && !product.delete),
   //     error,
   //     isLoading
   //   }),
@@ -30,44 +33,39 @@ const Products = () => {
 
   const [deleteProduct, {}] = useDeleteProductMutation();
 
+  const allProducts = useMemo(() => {
+    return products?.length ? products.filter(product => product.remains && !product.delete) : [];
+  }, [products]);
 
-  useEffect(() => {
-    console.log('render');
-  }, [])
-
-  const allProducts = products?.length ? products.filter(product => product.remains !== 0 && !product.delete) : [];
   const count = allProducts.length;
 
-  const { visible, setVisible } = useModal()!;
+  const { visible, handleOpen, handleClose } = useModal()!;
+
+
   const isMobile = useMediaQuery('(max-width:599px)');
   const isTablet = useMediaQuery('(max-width:1199px)');
 
   const pageSize = isTablet ? 5 : 6;
 
-
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-  }
+  }, [setCurrentPage]);
 
-  const handleOpen = () => {
-    setVisible({ edit: true });
-  };
-  const handleClose = () => {
-    setVisible({ edit: false })
-  };
-
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback( async (id: string) => {
     const updateProduct = {
       delete: true
     };
     await deleteProduct({id, content: updateProduct});
-  };
+  }, [deleteProduct]);
 
-  const handleCurrentProduct = (data: IProduct) => {
+
+  const handleCurrentProduct = useCallback((data: IProduct) => {
     setCurrentProduct(data);
-  };
+  }, [setCurrentProduct]);
 
-  const productsCrop = paginate(allProducts, currentPage, pageSize);
+  const productsCrop = useMemo(() => paginate(allProducts, currentPage, pageSize), [allProducts, currentPage])
+
+  useEffect(() => console.log('RR'), [productsCrop])
 
   if (loading) {
     return <h2>Loading...</h2>
@@ -83,7 +81,7 @@ const Products = () => {
               products={productsCrop}
               handleDelete={handleDelete}
               onCurrentProduct={handleCurrentProduct}
-              onVisibleEdit={handleOpen}
+              onVisibleEdit={() => handleOpen('edit')}
             />
             {
               isMobile
@@ -94,18 +92,18 @@ const Products = () => {
                     { currentProduct && (
                         <ProductFormEdit
                             data={currentProduct}
-                            handleVisible={handleClose}
+                            handleVisible={() => handleClose('edit')}
                         />)
                     }
                 </Drawer>
                 : <Modal
                   visible={visible.edit}
-                  handleVisible={handleClose}
+                  handleVisible={() => handleClose('edit')}
                 >
                   {currentProduct && (
                     <ProductFormEdit
                       data={currentProduct}
-                      handleVisible={handleClose}
+                      handleVisible={() => handleClose('edit')}
                     />)
                   }
                 </Modal>

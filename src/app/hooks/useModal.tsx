@@ -1,10 +1,11 @@
-import React, { useContext, useState, useImperativeHandle, FC, forwardRef } from 'react';
+import React, { useContext, useState, FC } from 'react';
 
 type ModalState = {create: boolean; edit: boolean, sell: boolean}
 
 export interface IModalContext {
     visible: ModalState;
-    // setVisible: (arg: ModalState) => void;
+    handleOpen: (arg: string) => void;
+    handleClose: (arg: string) => void
 }
 
 const ModalContext = React.createContext<IModalContext | null>(null);
@@ -17,7 +18,7 @@ export interface ModalProps {
     children: React.ReactNode
 }
 
-export const ModalProvider: FC<ModalProps> = forwardRef<ModalRef, ModalProps>({children}, ref) => {
+export const ModalProvider: FC<ModalProps> = ({children}) => {
 
     const [visible, setVisible] = useState({create: false, edit: false, sell: false});
 
@@ -29,16 +30,7 @@ export const ModalProvider: FC<ModalProps> = forwardRef<ModalRef, ModalProps>({c
         setVisible(prevState => ({...prevState, [field]: false}))
     }
 
-    useImperativeHandle(ref, () => ({
-        openCreate: () => handleOpen('create'),
-        openEdit: () => handleOpen('edit'),
-        openSell: () => handleOpen('sell'),
-        closeCreate: () => handleClose('create'),
-        closeEdit: () => handleClose('edit'),
-        closeSell: () => handleClose('sell')
-    }));
-
-    return <ModalContext.Provider value={{visible}}>
+    return <ModalContext.Provider value={{visible, handleOpen, handleClose }}>
         {children}
     </ModalContext.Provider>
 }

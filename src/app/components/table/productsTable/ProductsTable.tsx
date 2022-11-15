@@ -1,4 +1,4 @@
-import React, { useContext }  from 'react';
+import React, {useContext, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 
 import Actions from '../../actions/Actions';
@@ -14,10 +14,10 @@ import {IProduct} from "../../../types/Product";
 
 const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}: IProductTableProp) => {
 
+    useEffect(() => (console.log('render here')))
+
     const {userId} = useContext(AuthContext)!;
     const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
-
-    console.log(user);
 
     if (loading) {
         return <h2>Loading...</h2>
