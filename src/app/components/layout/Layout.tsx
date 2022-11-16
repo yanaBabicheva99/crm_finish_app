@@ -34,7 +34,7 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                     </div>
                     <button
                         className={style.layout__btn}
-                        onClick={modalRef.current?.open}
+                        onClick={() => modalRef.current?.open()}
                     >
                         <IconBtn className={style.layout__btn_add}/>
                         <span>Create a product</span>
@@ -47,7 +47,7 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
             <>
                 {<Modal ref={modalRef}>
                     <ProductFormAdd
-                        handleVisible={modalRef.current?.close}
+                        handleVisible={() => modalRef.current?.close()}
                     />
                 </Modal>
                 }

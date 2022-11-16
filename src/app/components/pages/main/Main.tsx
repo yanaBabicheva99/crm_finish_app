@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { useGetAllProductsQuery } from '../../../service/ProductServices';
@@ -20,7 +20,6 @@ const Main = () => {
 
   const soldProducts = products?.length ? products.filter(product => product.quantity) : [];
   const { id, remains } = lacationState.state || { id: null, remains: null };
-
 
   useEffect(() => {
     if (id !== null) {
@@ -56,7 +55,7 @@ const Main = () => {
             <SellForm
                 id={id}
                 quantity={remains}
-                handleVisible={modalRef.current?.close}
+                handleVisible={() => modalRef.current?.close()}
             />
           </Modal>
       }
