@@ -51,10 +51,6 @@ const Products = () => {
     setCurrentProduct(data);
   }, []);
 
-  const handleOpenModal = useCallback(() => {
-    modalRef.current?.open()
-  }, []);
-
   const productsCrop = paginate(allProducts, currentPage, pageSize);
 
   if (loading) {
@@ -71,13 +67,13 @@ const Products = () => {
               products={productsCrop}
               handleDelete={handleDelete}
               onCurrentProduct={handleCurrentProduct}
-              onVisibleEdit={handleOpenModal}
+              onVisibleEdit={() => modalRef.current?.open()}
             />
                   <Modal ref={modalRef}>
                     {currentProduct && (
                     <ProductFormEdit
                         data={currentProduct}
-                        handleVisible={modalRef.current?.close}
+                        handleVisible={() => modalRef.current?.close()}
                     />)}
                   </Modal>
             <Pagination
