@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik } from 'formik';
+import {toast} from "react-toastify";
 
 import InputForm from '../inputForm/InputForm';
 import {useChangeProductMutation, useGetProductQuery} from '../../../service/ProductServices';
@@ -7,8 +8,7 @@ import {schemaProduct} from '../../../validation/ValidationSchema';
 
 import style from '../../modal/Modal.module.scss';
 import styleForm from '../form.module.scss';
-import {IProduct, IProductEditProp} from "../../../types/Product";
-import {toast} from "react-toastify";
+import { IProductEditProp, IProductInitialEdit} from "../../../types/Product";
 
 const EditProductSchema = schemaProduct;
 const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
@@ -32,7 +32,7 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
     const initialValues = dataProduct;
 
 
-    const Edit = async (data: Pick<IProduct, 'store' | 'productName' | 'category' | 'price' | 'weight' | 'remains'>) => {
+    const Edit = async (data: IProductInitialEdit) => {
         const content = {_id, ...data};
 
         if (oldProduct) {
@@ -47,7 +47,9 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
                 .unwrap()
                 .catch(err => toast.error('Something went wrong, try again later'))
 
-            handleVisible();
+            if (handleVisible) {
+                handleVisible();
+            }
         }
     };
 
@@ -135,8 +137,7 @@ const ProductFormEdit = ({handleVisible, data}: IProductEditProp) => {
                         >
                             Save changes
                         </button>
-                    </form>
-                )}
+                    </form>)}
             </Formik>
         </>
     );

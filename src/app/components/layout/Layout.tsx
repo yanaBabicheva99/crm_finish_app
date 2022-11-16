@@ -4,30 +4,19 @@ import Menu from '../menu/Menu';
 import Modal from '../modal/Modal';
 import ProductFormAdd from '../form/productForm/ProductFormAdd';
 import { ReactComponent as IconBtn } from '../../assets/img/layout/btn.svg';
-import {useModal} from '../../hooks/useModal';
 import Burger from '../Burger';
 import {ILayoutProp} from "../../types/Layout";
-
+import {ModalRef} from "../../types/Modal";
 
 import style from './Layout.module.scss';
-import { useMediaQuery, Drawer } from '@mui/material';
+
 
 const Layout = ({children, title, subtitle}: ILayoutProp) => {
-
-    type ModalRef = React.ElementRef<typeof Modal>;
     const modalRef = useRef<ModalRef>(null);
-
-   const isMobile = useMediaQuery('(max-width:599px)');
-
-   const {visible,  handleClose} = useModal()!;
 
    const [openBurger, setOpenBurger] = useState<boolean>(false);
     const handleOpenBurger = () => {
         setOpenBurger(!openBurger);
-    }
-
-    const handleOpen = () => {
-        modalRef.current?.open()
     }
 
     return (
@@ -45,7 +34,7 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                     </div>
                     <button
                         className={style.layout__btn}
-                        onClick={handleOpen}
+                        onClick={modalRef.current?.open}
                     >
                         <IconBtn className={style.layout__btn_add}/>
                         <span>Create a product</span>
@@ -56,22 +45,11 @@ const Layout = ({children, title, subtitle}: ILayoutProp) => {
                 </section>
             </div>
             <>
-                {
-                    isMobile
-                    ?  <Drawer
-                            open={visible.create}
-                            onClose={() => handleClose('create')}
-                        >
-                            <ProductFormAdd
-                                handleVisible={() => handleClose('create')}
-                            />
-                        </Drawer>
-
-                    :      <Modal ref={modalRef}>
-                            <ProductFormAdd
-                                handleVisible={() => handleClose('create')}
-                            />
-                        </Modal>
+                {<Modal ref={modalRef}>
+                    <ProductFormAdd
+                        handleVisible={modalRef.current?.close}
+                    />
+                </Modal>
                 }
             </>
         </div>

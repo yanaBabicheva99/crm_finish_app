@@ -1,9 +1,8 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 
 import { useRoutes } from './routes';
-import { ModalProvider } from './hooks/useModal';
 import { AuthContext } from './context/AuthContext';
 import { createStore } from './store/store';
 import useAuth from './hooks/useAuth';
@@ -18,7 +17,6 @@ function App() {
     const routes = useRoutes(isAuthenticated);
     return (
         <div className="App">
-            <ModalProvider>
                 <AuthContext.Provider value={{
                     token, login, logout, userId, isAuthenticated
                 }}>
@@ -26,7 +24,6 @@ function App() {
                             {routes}
                     </Provider>
                 </AuthContext.Provider>
-            </ModalProvider>
             <ToastContainer position="top-center"/>
         </div>
     );

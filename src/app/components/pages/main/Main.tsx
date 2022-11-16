@@ -4,37 +4,23 @@ import { useLocation } from 'react-router-dom';
 import { useGetAllProductsQuery } from '../../../service/ProductServices';
 import SellForm from '../../form/productForm/SellForm';
 import Modal from '../../modal/Modal';
-import { useModal } from '../../../hooks/useModal';
 import { Pie } from '../../Charts/Pie/Pie';
 import { Bar } from '../../Charts/Bar/Bar';
 import { Line } from '../../Charts/Line/Line';
+import {ModalRef} from "../../../types/Modal";
 
 import style from './Main.module.scss';
-import { Drawer, useMediaQuery } from '@mui/material';
 import styleTitle from '../../../style/title/Title.module.scss';
 
 const Main = () => {
-
-  type ModalRef = React.ElementRef<typeof Modal>;
   const modalRef = useRef<ModalRef>(null);
-
   const lacationState = useLocation();
-  const { visible, handleOpen: handleOpenModal, handleClose } = useModal()!;
 
   const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
 
   const soldProducts = products?.length ? products.filter(product => product.quantity) : [];
-
-  // const { data: oldProduct, error, isLoading } = useGetAllProductsQuery(undefined, {
-  //   selectFromResult: ({ data, error, isLoading }) => ({
-  //     data: data?.find((item) =>  item._id === _id),
-  //     error,
-  //     isLoading
-  //   }),
-  // });
-
   const { id, remains } = lacationState.state || { id: null, remains: null };
-  const isMobile = useMediaQuery('(max-width:599px)');
+
 
   useEffect(() => {
     if (id !== null) {
@@ -62,30 +48,17 @@ const Main = () => {
         </div>
       }
       {
-        id !== null && isMobile
-          ? <Drawer
-            anchor="bottom"
-            open={visible.sell}
-            onClose={() => handleClose('sell')}
-          >
-            <SellForm
-              id={id}
-              quantity={remains}
-              handleVisible={() => handleClose('sell')}
-            />
-          </Drawer>
-
-          : id !== null && (
+          id !== null &&
           <Modal
-            sell={true}
-            ref={modalRef}
+              sell={true}
+              ref={modalRef}
           >
             <SellForm
-              id={id}
-              quantity={remains}
-              handleVisible={() => handleClose('sell')}
+                id={id}
+                quantity={remains}
+                handleVisible={modalRef.current?.close}
             />
-          </Modal>)
+          </Modal>
       }
     </>
   );

@@ -9,7 +9,7 @@ import {schemaUser} from '../../../validation/ValidationSchema';
 
 import style from '../../pages/login/Login.module.scss';
 import styleForm from '../form.module.scss';
-import {IUser} from "../../../types/User";
+import {IUser, IUserRegister} from "../../../types/User";
 
 const SignupSchema = schemaUser;
 
@@ -17,18 +17,16 @@ const RegisterForm = () => {
     const [signUp] = useSignUpMutation();
     const navigate = useNavigate();
 
-
     const initialValues = {
         name: '',
         lastName: '',
         companyName: '',
         email: '',
         password: '',
-        repeatPassword: ''
+        repeatPassword: '',
     };
 
-
-    const handleSubmit = async (content: Omit<IUser, '_id' | '__v' | 'address' >) => {
+    const handleSubmit = async (content: IUserRegister) => {
         signUp(content)
           .unwrap()
           .then((data) => navigate('/login'))

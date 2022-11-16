@@ -9,12 +9,14 @@ import {IProduct, IProductActionProp} from "../../types/Product";
 
 
 const Actions = ({element, handleDelete, onCurrentProduct, onVisibleEdit}: IProductActionProp) => {
-
     const navigate = useNavigate();
 
     const handleClickChange = () => {
         onCurrentProduct(element);
-        onVisibleEdit();
+
+        if (onVisibleEdit) {
+            onVisibleEdit();
+        }
     }
     const handleClickSell = (element: IProduct) => {
         navigate('/', {

@@ -26,3 +26,10 @@ export interface ILogin {
     title: string;
 }
 
+export interface IUserInitial extends Omit<IUser, '_id' | '__v' | 'password' > {
+
+}
+
+export interface IUserRegister extends Omit<IUser, '_id' | '__v' | 'address' > {
+
+}

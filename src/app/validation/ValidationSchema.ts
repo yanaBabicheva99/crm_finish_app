@@ -109,3 +109,46 @@ export const schemaUser = Yup.object().shape({
         .oneOf([Yup.ref('password'), null], Validation.isSame)
 });
 
+export const changeUser =  Yup.object().shape({
+    name: Yup.string()
+        .min(2, Validation.isShort)
+        .max(10, Validation.isLong)
+        .required(Validation.isRequired),
+    lastName: Yup.string()
+        .min(2, Validation.isShort)
+        .max(10, Validation.isLong)
+        .required(Validation.isRequired),
+    companyName: Yup.string()
+        .min(2, Validation.isShort)
+        .max(10, Validation.isLong)
+        .required(Validation.isRequired),
+
+    email: Yup.string().email(Validation.isInvalid).required(Validation.isRequired),
+    oldPassword: Yup.string()
+        .matches(
+            /^\S*$/,
+            Validation.isIncorrect
+        ),
+    newPassword: Yup.string()
+        .matches(
+            /^\S*$/,
+            Validation.isIncorrect
+        )
+        .matches(
+            /(?=.*[A-Z])/,
+            Validation.isIncorrect
+        )
+        .matches(
+            /(?=.*[0-9])/,
+            Validation.isDigit
+        )
+        .matches(
+            /(?=.*[!@#$%^&*])/,
+            Validation.isSymbol
+        )
+        .matches(
+            /(?=.{8,})/,
+            Validation.isLength
+        ),
+});
+

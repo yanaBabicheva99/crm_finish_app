@@ -14,8 +14,6 @@ import {IProduct} from "../../../types/Product";
 
 const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}: IProductTableProp) => {
 
-    useEffect(() => (console.log('render here')))
-
     const {userId} = useContext(AuthContext)!;
     const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
 

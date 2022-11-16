@@ -1,16 +1,16 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import { useMediaQuery } from '@mui/material';
 
 import ProductsTable from '../../table/productsTable/ProductsTable';
 import Modal from '../../modal/Modal';
 import ProductFormEdit from '../../form/productForm/ProductFormEdit';
-import { useModal } from '../../../hooks/useModal';
 import Pagination from '../../Pagination';
 import { paginate } from '../../../utils/paginate';
 import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../service/ProductServices';
-
-import { Drawer, useMediaQuery } from '@mui/material';
-import style from '../../../style/title/Title.module.scss';
 import {IProduct} from "../../../types/Product";
+import {ModalRef} from "../../../types/Modal";
+
+import style from '../../../style/title/Title.module.scss';
 
 const Products = () => {
 
@@ -18,23 +18,14 @@ const Products = () => {
      console.log('RENDER')
   });
 
-  type ModalRef = React.ElementRef<typeof Modal>;
-  const modalRef = useRef<ModalRef>(null);
+  const isTablet = useMediaQuery('(max-width:1199px)');
 
+  const modalRef = useRef<ModalRef>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
 
   const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
-
-  // const { data: products, error, isLoading: loading } = useGetAllProductsQuery(undefined, {
-  //   selectFromResult: ({ data, error, isLoading }) => ({
-  //     data: data?.filter((product: IProduct) => product.remains && !product.delete),
-  //     error,
-  //     isLoading
-  //   }),
-  // });
-
   const [deleteProduct, {}] = useDeleteProductMutation();
 
   const allProducts = useMemo(() => {
@@ -43,43 +34,28 @@ const Products = () => {
 
   const count = allProducts.length;
 
-  const { visible, handleOpen, handleClose } = useModal()!;
-
-
-  const isMobile = useMediaQuery('(max-width:599px)');
-  const isTablet = useMediaQuery('(max-width:1199px)');
-
   const pageSize = isTablet ? 5 : 6;
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-  }, [setCurrentPage]);
+  }, []);
 
   const handleDelete = useCallback( async (id: string) => {
     const updateProduct = {
       delete: true
     };
     await deleteProduct({id, content: updateProduct});
-  }, [deleteProduct]);
-
+  }, []);
 
   const handleCurrentProduct = useCallback((data: IProduct) => {
     setCurrentProduct(data);
-  }, [setCurrentProduct]);
+  }, []);
 
-  const productsCrop = useMemo(() => paginate(allProducts, currentPage, pageSize), [allProducts, currentPage])
+  const handleOpenModal = useCallback(() => {
+    modalRef.current?.open()
+  }, []);
 
-  useEffect(() => console.log('RR'), [productsCrop])
-
-  useEffect(() => {
-    if (currentProduct) {
-      modalRef.current?.open()
-    }
-  }, [currentProduct])
-
-  const handleCloseModal = () => {
-    modalRef.current?.close()
-  }
+  const productsCrop = paginate(allProducts, currentPage, pageSize);
 
   if (loading) {
     return <h2>Loading...</h2>
@@ -95,30 +71,15 @@ const Products = () => {
               products={productsCrop}
               handleDelete={handleDelete}
               onCurrentProduct={handleCurrentProduct}
-              onVisibleEdit={() => handleOpen('edit')}
+              onVisibleEdit={handleOpenModal}
             />
-            {
-              isMobile
-                ? <Drawer
-                  open={visible.edit}
-                  onClose={handleClose}
-                >
-                    { currentProduct && (
-                        <ProductFormEdit
-                            data={currentProduct}
-                            handleVisible={() => handleClose('edit')}
-                        />)
-                    }
-                </Drawer>
-                : <Modal ref={modalRef}>
-                  {currentProduct && (
+                  <Modal ref={modalRef}>
+                    {currentProduct && (
                     <ProductFormEdit
-                      data={currentProduct}
-                      handleVisible={handleCloseModal}
-                    />)
-                  }
-                </Modal>
-            }
+                        data={currentProduct}
+                        handleVisible={modalRef.current?.close}
+                    />)}
+                  </Modal>
             <Pagination
               itemsCount={count}
               pageSize={pageSize}

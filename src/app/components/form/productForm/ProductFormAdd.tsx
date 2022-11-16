@@ -39,7 +39,9 @@ const ProductFormAdd = ({handleVisible}: IProductAddProp) => {
            .then(data => navigate('/products'))
            .catch((err) => toast.error('Something went wrong, try again later'))
 
-        handleVisible();
+        if (handleVisible) {
+            handleVisible();
+        }
         resetForm();
     };
 

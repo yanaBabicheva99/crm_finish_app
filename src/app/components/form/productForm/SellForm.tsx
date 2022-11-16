@@ -57,8 +57,9 @@ const SellForm = ({handleVisible, quantity, id}: IProductSellProp) => {
              updateProduct({id, content: updatedProduct})
                  .unwrap()
                  .catch(err => toast.error('Something went wrong, try again later'))
-
-            handleVisible();
+            if (handleVisible) {
+                handleVisible();
+            }
         }
     };
 

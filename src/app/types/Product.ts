@@ -22,7 +22,7 @@ export interface IProductInitialAdd extends Omit<IProduct, 'remains'>{
 }
 
 export interface IProductAddProp {
-    handleVisible: () => void
+    handleVisible: (() => void) | undefined;
 }
 
 export interface IProductEditProp extends IProductAddProp {
@@ -39,11 +39,15 @@ export interface IProductInitialSell {
    day: string
 }
 
+export interface IProductInitialEdit extends Pick<IProduct, 'store' | 'productName' | 'category' | 'price' | 'weight' | 'remains'> {
+
+}
+
 export interface IProductTableProp {
     products: IProduct[];
     handleDelete: (id: string) => Promise<void>;
     onCurrentProduct: (data:IProduct) => void;
-    onVisibleEdit: () => void;
+    onVisibleEdit: (() => void) | undefined;
 }
 
 export interface IProductActionProp extends Omit<IProductTableProp, 'products'>{

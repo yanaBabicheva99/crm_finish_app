@@ -1,61 +1,20 @@
 import React, { useContext } from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 
 import InputForm from '../../form/inputForm/InputForm';
 import { AuthContext } from '../../../context/AuthContext';
+import {changeUser} from "../../../validation/ValidationSchema";
+import {IUserInitial} from '../../../types'
 import {
   useChangeUserInfoMutation,
   useGetUserQuery,
   useUpdateUserInfoMutation
 } from '../../../service/UserServices';
-import {IUser} from '../../../types'
 
 import style from './Personal.module.scss'
 
-const PersonalSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Name is too short!')
-    .max(10, 'Name is too long!')
-    .required('Name is required'),
-  lastName: Yup.string()
-    .min(2, 'Last name is too short!')
-    .max(10, 'Last name is too long!')
-    .required('Last name is required'),
-  companyName: Yup.string()
-    .min(2, 'Company name is too short!')
-    .max(10, 'Company name is too long!')
-    .required('Company name is required'),
-
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  oldPassword: Yup.string()
-    .matches(
-      /^\S*$/,
-      'The old password is incorrect'
-    ),
-  newPassword: Yup.string()
-    .matches(
-      /^\S*$/,
-      'The new password is incorrect'
-    )
-    .matches(
-      /(?=.*[A-Z])/,
-      'The new password must have at least one capital letter'
-    )
-    .matches(
-      /(?=.*[0-9])/,
-      'The new password must have at least one figure'
-    )
-    .matches(
-      /(?=.*[!@#$%^&*])/,
-      'The new password must have at least one special symbol !@#$%^&*'
-    )
-    .matches(
-      /(?=.{8,})/,
-      'The new password must consist of at least 8 symbols'
-    ),
-});
+const PersonalSchema = changeUser;
 
 const Personal = () => {
   const {userId} = useContext(AuthContext)!;
@@ -73,9 +32,9 @@ const Personal = () => {
 
   const { _id, __v, password, ...data } = user!;
 
-  const initialValues: Omit<IUser, '_id' | '__v' | 'password' > = { oldPassword: '', newPassword: '', ...data };
+  const initialValues: IUserInitial = { oldPassword: '', newPassword: '', ...data };
 
-  const handleChange = async (data: Omit<IUser, '_id' | '__v' | 'password' >) => {
+  const handleChange = async (data: IUserInitial) => {
     if (data.oldPassword && data.newPassword) {
       changeUserInfo({id: _id, content: data})
         .unwrap()
