@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import { Routes } from '../../constants';
-import { AuthContext } from '../../context/AuthContext';
+import { productsAPI } from '../../service/ProductServices';
 import { ReactComponent as IconHome } from '../../assets/img/menu/home.svg';
 import { ReactComponent as IconProduct } from '../../assets/img/menu/product.svg';
 import { ReactComponent as IconUser } from '../../assets/img/menu/user.svg';
@@ -10,13 +11,10 @@ import { ReactComponent as IconSales } from '../../assets/img/menu/sales.svg';
 import { ReactComponent as IconLogo } from '../../assets/img/menu/log.svg';
 import logoJustice from '../../assets/img/menu/justice.png';
 import logoCrm from '../../assets/img/menu/crm.svg';
+import {DispatchType} from "../../types/Store";
 
 import style from './Menu.module.scss';
-import { productsAPI } from '../../service/ProductServices';
-import { useDispatch } from 'react-redux';
-
-
-
+import {removeToken} from "../../service/TokenServices";
 
 const rootClasses = (isActive: boolean) => {
     return isActive ? style.menu__nav_item__active : style.menu__nav_item;
@@ -29,12 +27,11 @@ const nav = [
 ]
 const Menu = ({open}: {open: boolean}) => {
 
-    const {logout} = useContext(AuthContext)!;
-    const dispatch = useDispatch();
+    const dispatch: DispatchType = useDispatch();
 
     const handleLogout = () => {
         dispatch(productsAPI.util.resetApiState());
-        logout();
+        dispatch(removeToken());
     }
 
     return (

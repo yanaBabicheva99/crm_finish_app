@@ -1,5 +1,6 @@
 import React from 'react';
 import {Route, Routes as Switch, Navigate} from 'react-router-dom';
+import {useSelector} from "react-redux";
 
 import Layout from "./components/layout/Layout";
 import {Routes} from "./constants";
@@ -11,9 +12,11 @@ import Login from "./components/pages/login/Login";
 import LoginForm from "./components/form/loginForm/LoginForm";
 import RegisterForm from "./components/form/registerForm/RegisterForm";
 import LayoutLogin from "./components/layout/LayoutLogin";
+import {getToken} from "./service/TokenServices";
 
-export const useRoutes = (isAuthenticated: boolean) => {
 
+ const RoutesPage = () => {
+    const isAuthenticated = useSelector(getToken());
     const pages = [
         {
             title: 'Sales statistics',
@@ -104,3 +107,5 @@ export const useRoutes = (isAuthenticated: boolean) => {
         )
     }
 }
+
+export default RoutesPage;

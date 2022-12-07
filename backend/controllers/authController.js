@@ -10,12 +10,19 @@ module.exports.login = async function(req, res) {
     if(candidate) {
         const passwordResult = bcrypt.compareSync(req.body.password, candidate.password);
         if(passwordResult) {
-            const token = jwt.sign({
+            const accessToken = jwt.sign({
                 email: candidate.email,
                 userId: candidate._id
             }, keys.jwt, {expiresIn: 60 * 60});
 
+            const refreshToken = jwt.sing({
+              email: candidate.email,
+              userId: candidate._id,
+            }, keys.jwt, {expiresIn: 30 * 24 * 60 * 60 * 1000});
+
            res.status(200).json({
+               accessToken,
+               refreshToken,
                token: `Bearer ${token}`,
                userId: candidate._id,
            })

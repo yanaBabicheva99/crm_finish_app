@@ -1,20 +1,21 @@
-import React, {useContext, useEffect} from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import {useSelector} from "react-redux";
 
 import Actions from '../../actions/Actions';
 import TableHeader from '../tableHeader/TableHeader';
 import TableBody from '../tableBody/TableBody';
 import { useGetUserQuery } from '../../../service/UserServices';
 import { getPrice, getWeight } from '../../../utils/Products';
+import {getUserId} from "../../../service/TokenServices";
 
 import styleBox from '../Table.module.scss';
 import {IProductTableProp} from "../../../types/Product";
-import {AuthContext} from "../../../context/AuthContext";
 import {IProduct} from "../../../types/Product";
 
 const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}: IProductTableProp) => {
 
-    const {userId} = useContext(AuthContext)!;
+    const userId = useSelector(getUserId());
     const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
 
     if (loading) {

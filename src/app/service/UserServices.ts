@@ -1,60 +1,30 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
+import { createApi } from '@reduxjs/toolkit/dist/query/react';
 import {IUser} from '../types/User';
-
-interface ISignIn {
-  token: string;
-  userId: string
-}
+import customFetchBase from "./middleware/Interceptor";
 
 export const userAPI = createApi({
   reducerPath: 'userAPI',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000/api/auth/'
-  }),
+  baseQuery: customFetchBase,
   tagTypes: ['User'],
   endpoints: (build) => ({
-    signUp: build.mutation<IUser, Omit<IUser, '_id' | '__v' | 'address'>>({
-     query: (content) => ({
-       url: 'register',
-       method: 'POST',
-       body: content
-     })
-    }),
-    signIn: build.mutation<ISignIn, Pick<IUser, 'email' | 'password'>>({
-      query: (content) => ({
-        url: 'login',
-        method: 'POST',
-        body: content
-      })
-    }),
     getUser: build.query<IUser, string>({
       query: (id: string) => ({
-        url: `get/${id}`,
-        headers: {
-          'authorization': JSON.parse(localStorage.getItem('userData') || '').token,
-          'content-type': 'text/plain',
-        },
+        url: `auth/get`,
       }),
       providesTags: (result) => ['User'],
     }),
     updateUserInfo: build.mutation<IUser, object>({
       query: (data: {id: string, content: Omit<IUser, '_id' | '__v' | 'password'>}) => ({
-        url: `update/${data.id}`,
+        url: `auth/update`,
         method: 'PATCH',
-        headers: {
-          'authorization': JSON.parse(localStorage.getItem('userData') || '').token,
-        },
         body: data.content
       }),
       invalidatesTags: ['User']
     }),
     changeUserInfo: build.mutation<IUser, object>({
       query: (data: {id: string, content: Omit<IUser, '_id' | '__v' >}) => ({
-        url: `change/${data.id}`,
+        url: `auth/change`,
         method: 'PUT',
-        headers: {
-          'authorization': JSON.parse(localStorage.getItem('userData') || '').token,
-        },
         body: data.content
       }),
       invalidatesTags: ['User']
@@ -65,6 +35,4 @@ export const {
   useGetUserQuery,
   useUpdateUserInfoMutation,
   useChangeUserInfoMutation,
-  useSignInMutation,
-  useSignUpMutation
 } = userAPI;

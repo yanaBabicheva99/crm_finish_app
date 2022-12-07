@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 
 import InputForm from '../inputForm/InputForm';
-import { useSignUpMutation } from '../../../service/UserServices';
+import { useSignUpMutation } from '../../../service/AuthService';
 import {schemaUser} from '../../../validation/ValidationSchema';
 
 import style from '../../pages/login/Login.module.scss';

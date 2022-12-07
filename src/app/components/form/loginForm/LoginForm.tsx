@@ -1,13 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import {useDispatch} from "react-redux";
 
 import InputForm from '../inputForm/InputForm';
-import {AuthContext} from '../../../context/AuthContext';
-import { useSignInMutation } from '../../../service/UserServices';
+import { useSignInMutation } from '../../../service/AuthService';
 import {IUser} from "../../../types/User";
+import {createToken} from "../../../service/TokenServices";
+import {DispatchType} from "../../../types/Store";
 
 import style from '../../pages/login/Login.module.scss';
 import styleForm from '../form.module.scss';
@@ -21,8 +23,8 @@ const SignupSchema = Yup.object().shape({
 });
 
 const RegisterForm = () => {
-    const authContext = useContext(AuthContext);
     const [signIn] = useSignInMutation();
+    const dispatch: DispatchType = useDispatch();
 
     const initialValues = {
         email: '',
@@ -30,13 +32,10 @@ const RegisterForm = () => {
     };
 
     const handleSubmit = async (content: Pick<IUser, 'email' | 'password'>) => {
-        if (authContext) {
-            const {login} = authContext;
             signIn(content)
                 .unwrap()
-                .then((data) => login(data.token, data.userId))
+                .then((data) => dispatch(createToken(data)))
                 .catch(({data}) => toast.error(data.message))
-        }
     };
 
     return (

@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
+import {useSelector} from "react-redux";
 
 import InputForm from '../../form/inputForm/InputForm';
-import { AuthContext } from '../../../context/AuthContext';
 import {changeUser} from "../../../validation/ValidationSchema";
-import {IUserInitial} from '../../../types'
+import {IUserInitial} from '../../../types';
+import {getUserId} from "../../../service/TokenServices";
 import {
   useChangeUserInfoMutation,
   useGetUserQuery,
@@ -17,7 +18,7 @@ import style from './Personal.module.scss'
 const PersonalSchema = changeUser;
 
 const Personal = () => {
-  const {userId} = useContext(AuthContext)!;
+  const userId = useSelector(getUserId());
   const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
   const [changeUserInfo] = useChangeUserInfoMutation();
   const [updateUserInfo] = useUpdateUserInfoMutation();
