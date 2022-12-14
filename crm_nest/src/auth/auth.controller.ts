@@ -25,7 +25,7 @@ export class AuthController {
   }
 
   @Post('/logout')
-  async logout(@Req() request: FastifyRequest, @Res() response: FastifyReply) {
+  async logout(@Req() request: FastifyRequest, @Res({ passthrough: true }) response: FastifyReply) {
     const { refreshToken } = request.cookies;
     const token = await this.authService.logout(refreshToken);
     response.clearCookie('refreshToken');

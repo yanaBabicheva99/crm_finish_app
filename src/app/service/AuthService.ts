@@ -30,10 +30,11 @@ export const authAPI = createApi({
                 // mode: 'cors'
             })
         }),
-        logout: build.mutation({
+        logout: build.mutation<string, void>({
             query: () => ({
                 url: 'logout',
                 method: 'POST',
+                credentials: 'include',
             }),
         }),
     }),

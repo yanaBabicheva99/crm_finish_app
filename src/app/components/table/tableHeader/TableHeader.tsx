@@ -10,7 +10,6 @@ const TableHeader = ({columns, onSort, selectedSort}: {
         onSort?: (item: IProductSort) => void,
         selectedSort?: IProductSort
     }) => {
-    console.log(columns);
     const handleSort = (item: string) => {
         if (selectedSort?.path === item) {
            onSort && onSort({

@@ -12,6 +12,7 @@ import {IProduct, IProductSort} from "../../../types/Product";
 import {ModalRef} from "../../../types/Modal";
 
 import style from '../../../style/title/Title.module.scss';
+import {toast} from "react-toastify";
 
 const Products = () => {
 
@@ -49,7 +50,10 @@ const Products = () => {
     const updateProduct = {
       delete: true
     };
-    await deleteProduct({id, content: updateProduct});
+    deleteProduct({id, content: updateProduct})
+        .unwrap()
+        .catch(err => toast.error('Something went wrong, try again later'))
+    ;
   }, []);
 
   const handleCurrentProduct = useCallback((data: IProduct) => {

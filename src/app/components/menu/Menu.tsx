@@ -15,6 +15,7 @@ import {DispatchType} from "../../types/Store";
 
 import style from './Menu.module.scss';
 import {removeToken} from "../../service/TokenServices";
+import {useLogoutMutation} from "../../service/AuthService";
 
 const rootClasses = (isActive: boolean) => {
     return isActive ? style.menu__nav_item__active : style.menu__nav_item;
@@ -28,10 +29,12 @@ const nav = [
 const Menu = ({open}: {open: boolean}) => {
 
     const dispatch: DispatchType = useDispatch();
+    const [logout] = useLogoutMutation();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         dispatch(productsAPI.util.resetApiState());
         dispatch(removeToken());
+        await logout();
     }
 
     return (
