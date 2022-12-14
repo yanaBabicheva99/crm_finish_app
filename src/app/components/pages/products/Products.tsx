@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import _ from 'lodash';
 import { useMediaQuery } from '@mui/material';
 
 import ProductsTable from '../../table/productsTable/ProductsTable';
@@ -7,30 +8,30 @@ import ProductFormEdit from '../../form/productForm/ProductFormEdit';
 import Pagination from '../../Pagination';
 import { paginate } from '../../../utils/paginate';
 import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../service/ProductServices';
-import {IProduct} from "../../../types/Product";
+import {IProduct, IProductSort} from "../../../types/Product";
 import {ModalRef} from "../../../types/Modal";
 
 import style from '../../../style/title/Title.module.scss';
 
 const Products = () => {
 
-  useEffect(() => {
-     console.log('RENDER')
-  });
-
   const isTablet = useMediaQuery('(max-width:1199px)');
 
   const modalRef = useRef<ModalRef>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState<IProductSort>({ path: 'productName', order: 'asc' });
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
 
   const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
   const [deleteProduct, {}] = useDeleteProductMutation();
 
   const allProducts = useMemo(() => {
-    return products?.length ? products.filter(product => product.remains && !product.delete) : [];
-  }, [products]);
+    const filteredProducts = products?.length ? products.filter(product => product.remains && !product.delete) : [];
+        return filteredProducts.length && sortBy
+        ? _.orderBy(filteredProducts, [sortBy.path],[sortBy.order])
+        : filteredProducts;
+  }, [products, sortBy]);
 
   const count = allProducts.length;
 
@@ -38,6 +39,10 @@ const Products = () => {
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
+  }, []);
+
+  const handleSort = useCallback((item: IProductSort) => {
+    setSortBy(item);
   }, []);
 
   const handleDelete = useCallback( async (id: string) => {
@@ -65,7 +70,9 @@ const Products = () => {
           : <>
             <ProductsTable
               products={productsCrop}
+              selectedSort={sortBy}
               handleDelete={handleDelete}
+              onSort={handleSort}
               onCurrentProduct={handleCurrentProduct}
               onVisibleEdit={() => modalRef.current?.open()}
             />

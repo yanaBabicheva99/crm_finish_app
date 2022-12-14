@@ -31,7 +31,9 @@ const customFetchBase: BaseQueryFn<
     FetchBaseQueryError
     > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions)
-    if (result.error && result.error.status === 401) {
+
+        if (result.error && ((result.error.status === 401) || (result.error.status === 'PARSING_ERROR' &&
+            result.error.originalStatus === 401))) {
         const refreshResult = await baseQuery({
                 credentials: 'include',
                 url: 'auth/token/refresh'

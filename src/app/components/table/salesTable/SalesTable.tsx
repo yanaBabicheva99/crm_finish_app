@@ -42,10 +42,10 @@ const SalesTable = ({sellProducts}: {sellProducts: IProduct[]}) => {
             path: 'creationData',
             name: 'Creation date',
         },
-        price: {
-            path: 'price',
-            name: 'Price',
-            component: (product: IProduct) => getPrice(product.price)
+        lastSalePrice: {
+            path: 'lastSalePrice',
+            name: 'Last sale price',
+            component: (product: IProduct) => getPrice(product.lastSalePrice)
         },
         quantity: {
             path: 'quantity',

@@ -13,7 +13,7 @@ import styleBox from '../Table.module.scss';
 import {IProductTableProp} from "../../../types/Product";
 import {IProduct} from "../../../types/Product";
 
-const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}: IProductTableProp) => {
+const ProductsTable = ({products, handleDelete, onSort, onCurrentProduct, selectedSort, onVisibleEdit}: IProductTableProp) => {
 
     const userId = useSelector(getUserId());
     const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
@@ -63,7 +63,7 @@ const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}
             name: 'Actions',
             component: (product: IProduct) => (
                 <Actions
-                    element={product!}
+                    element={product}
                     handleDelete={handleDelete}
                     onCurrentProduct={onCurrentProduct}
                     onVisibleEdit={onVisibleEdit}
@@ -75,7 +75,7 @@ const ProductsTable = ({products, handleDelete, onCurrentProduct, onVisibleEdit}
         <div className={styleBox.box__wrapper}>
             <div className={styleBox.box}>
                 <table>
-                    <TableHeader columns={columns}/>
+                    <TableHeader selectedSort={selectedSort} onSort={onSort} columns={columns}/>
                     <TableBody columns={columns} items={products}/>
                 </table>
             </div>

@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const keys = require('../config/keys');
 const errorHandler = require('../utils/errorHandler');
-
+const tokenService = require('../services/tokenService');
 
 module.exports.login = async function(req, res) {
     const candidate = await User.findOne({email: req.body.email});
@@ -13,17 +13,23 @@ module.exports.login = async function(req, res) {
             const accessToken = jwt.sign({
                 email: candidate.email,
                 userId: candidate._id
-            }, keys.jwt, {expiresIn: 60 * 60});
+            }, keys.jwtAccess, {expiresIn: 30 * 30});
 
-            const refreshToken = jwt.sing({
+            const refreshToken = jwt.sign({
               email: candidate.email,
               userId: candidate._id,
-            }, keys.jwt, {expiresIn: 30 * 24 * 60 * 60 * 1000});
+            }, keys.jwtRefresh, {expiresIn: 30 * 24 * 60 * 60 * 1000});
+
+            await tokenService.saveToken(candidate._id, refreshToken);
+
+            res.cookie('refreshToken', refreshToken, {
+              maxAge: 30 * 24 * 60 * 60 * 1000,
+              httpOnly: true,
+            });
 
            res.status(200).json({
                accessToken,
                refreshToken,
-               token: `Bearer ${token}`,
                userId: candidate._id,
            })
 
@@ -63,16 +69,25 @@ module.exports.register = async function(req, res) {
             await user.save();
             res.status(201).json(user)
          } catch(err) {
-             errorHandler()
+             errorHandler(res, err)
          }
 
       }
 }
 
+module.exports.logout = async function(req, res) {
+  try {
+    const token = await tokenService.removeToken();
+    return token;
+  } catch (err) {
+    errorHandler(res, err);
+  }
+}
+
 module.exports.getUser = async function(req, res) {
     try {
         const user = await User.findOne({
-            _id:req.params.id
+            _id:req.user.id
         });
         res.status(200).json(user);
     } catch(err) {
@@ -82,7 +97,7 @@ module.exports.getUser = async function(req, res) {
 module.exports.updateUser = async function(req, res) {
     try {
         const user = await User.findOneAndUpdate(
-            {_id:req.params.id},
+            {_id: req.user.id},
             {$set: req.body},
             {new: true}
         )
@@ -94,7 +109,7 @@ module.exports.updateUser = async function(req, res) {
 
 module.exports.changeUser = async function(req, res) {
     try {
-        const user = await User.findOne({_id: req.params.id});
+        const user = await User.findOne({_id: req.user.id});
         const passwordResult = bcrypt.compareSync(req.body.oldPassword, user.password);
         if (passwordResult) {
             const salt = bcrypt.genSaltSync(10);

@@ -17,6 +17,10 @@ export interface IProduct {
     __v: number
 }
 
+export interface IProductSort {
+    path: string;
+    order: 'asc' | 'desc'
+}
 export interface IProductInitialAdd extends Omit<IProduct, 'remains'>{
     remains: string;
 }
@@ -45,12 +49,14 @@ export interface IProductInitialEdit extends Pick<IProduct, 'store' | 'productNa
 
 export interface IProductTableProp {
     products: IProduct[];
+    onSort: (item: IProductSort) => void;
+    selectedSort: IProductSort;
     handleDelete: (id: string) => Promise<void>;
     onCurrentProduct: (data:IProduct) => void;
     onVisibleEdit: (() => void) | undefined;
 }
 
-export interface IProductActionProp extends Omit<IProductTableProp, 'products'>{
+export interface IProductActionProp extends Omit<IProductTableProp, 'products' | 'onSort' | 'selectedSort'>{
     element: IProduct;
 }
 

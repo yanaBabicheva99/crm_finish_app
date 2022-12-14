@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.16",
     "@mui/material": "^5.10.9",
     "@reduxjs/toolkit": "^1.8.6",
     "@testing-library/jest-dom": "^5.16.5",
@@ -20,6 +21,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "concurrently": "^7.4.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "echarts": "^5.4.0",
     "echarts-for-react": "^3.0.2",
