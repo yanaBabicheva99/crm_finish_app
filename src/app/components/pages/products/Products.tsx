@@ -1,6 +1,9 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import _ from 'lodash';
 import { useMediaQuery } from '@mui/material';
+import { ColorRing } from 'react-loader-spinner';
+import {toast} from "react-toastify";
+import {useSelector} from "react-redux";
 
 import ProductsTable from '../../table/productsTable/ProductsTable';
 import Modal from '../../modal/Modal';
@@ -10,9 +13,10 @@ import { paginate } from '../../../utils/paginate';
 import { useDeleteProductMutation, useGetAllProductsQuery } from '../../../service/ProductServices';
 import {IProduct, IProductSort} from "../../../types/Product";
 import {ModalRef} from "../../../types/Modal";
+import {getUserId} from "../../../service/TokenServices";
+import {useGetUserQuery} from "../../../service/UserServices";
 
 import style from '../../../style/title/Title.module.scss';
-import {toast} from "react-toastify";
 
 const Products = () => {
 
@@ -24,8 +28,11 @@ const Products = () => {
   const [sortBy, setSortBy] = useState<IProductSort>({ path: 'productName', order: 'asc' });
   const [currentProduct, setCurrentProduct] = useState<IProduct | null>(null);
 
-  const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
+  const { data: products, isLoading: productLoading } = useGetAllProductsQuery();
   const [deleteProduct, {}] = useDeleteProductMutation();
+
+  const userId = useSelector(getUserId());
+  const {data: user, isLoading: userLoading} = useGetUserQuery(userId!);
 
   const allProducts = useMemo(() => {
     const filteredProducts = products?.length ? products.filter(product => product.remains && !product.delete) : [];
@@ -62,8 +69,16 @@ const Products = () => {
 
   const productsCrop = paginate(allProducts, currentPage, pageSize);
 
-  if (loading) {
-    return <h2>Loading...</h2>
+  if (productLoading || userLoading) {
+    return <ColorRing
+          visible={true}
+          height="70"
+          width="70"
+          ariaLabel="blocks-loading"
+          wrapperStyle={{}}
+          wrapperClass="blocks-wrapper"
+          colors={['#5382E7', '#5382E7', '#5382E7', '#5382E7', '#5382E7']}
+      />
   } else {
     return (
       <>
@@ -73,6 +88,7 @@ const Products = () => {
           </div>
           : <>
             <ProductsTable
+              user={user}
               products={productsCrop}
               selectedSort={sortBy}
               handleDelete={handleDelete}

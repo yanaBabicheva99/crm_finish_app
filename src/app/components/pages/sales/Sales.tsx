@@ -1,10 +1,14 @@
-import React, {useState, useMemo, useEffect, useCallback} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 import { useMediaQuery } from '@mui/material';
+import {useSelector} from "react-redux";
+import {ColorRing} from "react-loader-spinner";
 
 import SalesTable from '../../table/salesTable/SalesTable';
 import { paginate } from '../../../utils/paginate';
 import Pagination from '../../Pagination';
 import { useGetAllProductsQuery } from '../../../service/ProductServices';
+import {getUserId} from "../../../service/TokenServices";
+import {useGetUserQuery} from "../../../service/UserServices";
 
 import style from '../../../style/title/Title.module.scss';
 
@@ -12,7 +16,10 @@ const Sales = () => {
     const isTablet = useMediaQuery('(max-width:1199px)');
     const [currentPage, setCurrentPage] = useState(1);
 
-    const { data: products, error, isLoading: loading } = useGetAllProductsQuery();
+    const { data: products, isLoading: productLoading } = useGetAllProductsQuery();
+
+    const userId = useSelector(getUserId());
+    const {data: user, isLoading: userLoading} = useGetUserQuery(userId!);
 
     const soldProducts = useMemo(() => {
         return  products?.length ? products.filter(product => product.quantity): [];
@@ -27,8 +34,16 @@ const Sales = () => {
 
     const soldProductsCrop = paginate(soldProducts, currentPage, pageSize);
 
-    if (loading) {
-        return <h2>Loading...</h2>
+    if (productLoading || userLoading) {
+        return <ColorRing
+            visible={true}
+            height="70"
+            width="70"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            colors={['#5382E7', '#5382E7', '#5382E7', '#5382E7', '#5382E7']}
+        />
     } else {
         return (
             <>
@@ -37,6 +52,7 @@ const Sales = () => {
                         <h2 className={style.title}>Sales not found</h2>
                     </div>
                     : <SalesTable
+                        user={user}
                         sellProducts={soldProductsCrop}
                     />
                 }

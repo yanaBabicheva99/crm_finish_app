@@ -4,6 +4,7 @@ const User = require('../models/User');
 const keys = require('../config/keys');
 const errorHandler = require('../utils/errorHandler');
 const tokenService = require('../services/tokenService');
+const { validationResult } = require('express-validator');
 
 module.exports.login = async function(req, res) {
     const candidate = await User.findOne({email: req.body.email});
@@ -66,6 +67,12 @@ module.exports.register = async function(req, res) {
             companyName: req.body.companyName
          })
          try {
+           const errors = validationResult(req)
+           if (!errors.isEmpty()) {
+             return res.status(400).json({
+               message: 'incorrect data'
+             })
+           }
             await user.save();
             res.status(201).json(user)
          } catch(err) {

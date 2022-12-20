@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 import {useSelector} from "react-redux";
+import {ColorRing} from "react-loader-spinner";
 
 import InputForm from '../../form/inputForm/InputForm';
 import {changeUser} from "../../../validation/ValidationSchema";
@@ -24,7 +25,15 @@ const Personal = () => {
   const [updateUserInfo] = useUpdateUserInfoMutation();
 
   if (loading) {
-    return <h2>Loading...</h2>
+    return <ColorRing
+        visible={true}
+        height="70"
+        width="70"
+        ariaLabel="blocks-loading"
+        wrapperStyle={{}}
+        wrapperClass="blocks-wrapper"
+        colors={['#5382E7', '#5382E7', '#5382E7', '#5382E7', '#5382E7']}
+    />
   }
 
   if (error) {

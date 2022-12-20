@@ -1,26 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {useSelector} from "react-redux";
 
 import Actions from '../../actions/Actions';
 import TableHeader from '../tableHeader/TableHeader';
 import TableBody from '../tableBody/TableBody';
-import { useGetUserQuery } from '../../../service/UserServices';
 import { getPrice, getWeight } from '../../../utils/Products';
-import {getUserId} from "../../../service/TokenServices";
 
 import styleBox from '../Table.module.scss';
 import {IProductTableProp} from "../../../types/Product";
 import {IProduct} from "../../../types/Product";
 
-const ProductsTable = ({products, handleDelete, onSort, onCurrentProduct, selectedSort, onVisibleEdit}: IProductTableProp) => {
-
-    const userId = useSelector(getUserId());
-    const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
-
-    if (loading) {
-        return <h2>Loading...</h2>
-    }
+const ProductsTable = ({products, user, handleDelete, onSort, onCurrentProduct, selectedSort, onVisibleEdit}: IProductTableProp) => {
 
     const columns = {
         productName: {

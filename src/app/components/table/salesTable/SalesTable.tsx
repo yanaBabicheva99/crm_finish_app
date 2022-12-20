@@ -1,24 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {useSelector} from "react-redux";
 
 import TableHeader from '../tableHeader/TableHeader';
 import TableBody from '../tableBody/TableBody';
-import {getUserId} from "../../../service/TokenServices";
 import { getPrice, getWeight } from '../../../utils/Products';
-import { useGetUserQuery } from '../../../service/UserServices';
-import {IProduct} from "../../../types/Product";
+import {IProduct, IProductSaleProp} from "../../../types/Product";
+import {IUser} from "../../../types/User";
 
 import styleBox from '../Table.module.scss';
 
-const SalesTable = ({sellProducts}: {sellProducts: IProduct[]}) => {
-
-    const userId = useSelector(getUserId());
-    const {data: user, error, isLoading: loading} = useGetUserQuery(userId!);
-
-    if (loading) {
-        return <h2>Loading...</h2>
-    }
+const SalesTable = ({user, sellProducts}: IProductSaleProp) => {
 
     const columns = {
         productName: {

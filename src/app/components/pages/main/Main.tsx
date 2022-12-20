@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import { useLocation } from 'react-router-dom';
+import {ColorRing} from "react-loader-spinner";
 
 import { useGetAllProductsQuery } from '../../../service/ProductServices';
 import SellForm from '../../form/productForm/SellForm';
@@ -28,7 +29,15 @@ const Main = () => {
   }, []);
 
   if (loading) {
-    return <h2>Loading...</h2>
+     return <ColorRing
+        visible={true}
+        height="70"
+        width="70"
+        ariaLabel="blocks-loading"
+        wrapperStyle={{}}
+        wrapperClass="blocks-wrapper"
+        colors={['#5382E7', '#5382E7', '#5382E7', '#5382E7', '#5382E7']}
+    />
   }
 
   return (<>
