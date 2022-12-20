@@ -47,14 +47,15 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env NODE_ENV=production react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "nodemon backend/index",
+    "server": "cross-env NODE_ENV=development nodemon backend/index",
     "dev": "concurrently \"npm run server\" \"npm start\""
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.20"
   },
   "eslintConfig": {
