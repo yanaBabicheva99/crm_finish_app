@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { Controller, Post, Body, Res, Req } from '@nestjs/common';
+import {Controller, Post, Body, Res, Req, ValidationPipe} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/user.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -20,7 +20,7 @@ export class AuthController {
   }
 
   @Post('/register')
-  register(@Body() registerAuthDto: CreateUserDto) {
+  register(@Body(new ValidationPipe()) registerAuthDto: CreateUserDto) {
     return this.authService.register(registerAuthDto);
   }
 

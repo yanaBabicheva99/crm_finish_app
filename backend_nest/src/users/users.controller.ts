@@ -5,7 +5,7 @@ import {
   Patch,
   Get,
   UseGuards,
-  Put,
+  Put, ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
@@ -19,7 +19,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/create')
-  create(@Body() userDto: CreateUserDto) {
+  create(@Body(new ValidationPipe()) userDto: CreateUserDto) {
     return this.usersService.createUser(userDto);
   }
 
@@ -31,13 +31,13 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/update')
-  update(@Body() userUpdateDto: UserUpdateDto) {
+  update(@Body(new ValidationPipe()) userUpdateDto: UserUpdateDto) {
     return this.usersService.updateUser(userUpdateDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('/change')
-  change(@Body() userChangeDto: UserChangeDto) {
+  change(@Body(new ValidationPipe()) userChangeDto: UserChangeDto) {
     return this.usersService.changeUser(userChangeDto);
   }
 }
